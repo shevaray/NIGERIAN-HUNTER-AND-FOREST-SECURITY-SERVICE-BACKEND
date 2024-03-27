@@ -4,5 +4,5 @@
 
 [[redirects]]                # Redirects configuration
   from = "/*"
-  to = "/index.js"
+  to = "/app.js"
   status = 200
