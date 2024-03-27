@@ -1,5 +1,5 @@
 [build]
-  functions = ""  # The build command for your project
+  functions = "npm run start"  # The build command for your project
 #   publish = "routes/index.js"         # The directory to publish after the build
 
 # [[redirects]]                # Redirects configuration
