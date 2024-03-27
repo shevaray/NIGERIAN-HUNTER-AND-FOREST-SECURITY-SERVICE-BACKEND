@@ -39,4 +39,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = serverless(app);
+export const handler = serverless(app);
+
+// module.exports = serverless(app);
