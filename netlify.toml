@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"  # The build command for your project
+  command = "npm run start"  # The build command for your project
   publish = "build/"         # The directory to publish after the build
 
 [[redirects]]                # Redirects configuration
