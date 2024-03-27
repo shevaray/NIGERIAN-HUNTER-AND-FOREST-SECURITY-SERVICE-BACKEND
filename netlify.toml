@@ -1,6 +1,6 @@
-[build]
-  command = "npm run start"  # The build command for your project
-  publish = "routes/index.js"         # The directory to publish after the build
+# [build]
+#   command = "npm run start"  # The build command for your project
+#   publish = "routes/index.js"         # The directory to publish after the build
 
 [[redirects]]                # Redirects configuration
   from = "/*"
