@@ -1,7 +1,12 @@
 [build]
-command = "npm run build"
-functions = "functions"
-publish = "public"
+    command = "npm run build"
+    functions = "functions"
+    publish = "public"
 
 [dev]
-command = "npm start"
+    command = "npm start"
+
+[[redirects]]
+    from = "/*"
+    to = "/app.js"
+    status = 200
