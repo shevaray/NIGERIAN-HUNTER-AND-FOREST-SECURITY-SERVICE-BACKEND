@@ -2,9 +2,11 @@
   "name": "nigerian-hunter-and-forest-security-service-backend",
   "version": "0.0.0",
   "private": true,
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "dev": "nodemon src/app.js"
+
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
