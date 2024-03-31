@@ -12,10 +12,8 @@ const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, "../../views/index"));
-// app.set('view engine', 'jade')
-// Set view engine as EJS
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+app.set('view engine', 'jade');
+
 
 app.use(logger('dev'));
 app.use(express.json());
