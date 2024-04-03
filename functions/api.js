@@ -19,6 +19,6 @@ app.use('/users', usersRouter)
 app.use('/.netilfy/functions/api', router)
 module.exports.handler = serverless(app);
 
-app.listen(port, () => {
-    console.log('Server is up on port ' + port);
-})
+// app.listen(port, () => {
+//     console.log('Server is up on port ' + port);
+// })
