@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "start": "node functions/api.js",
+    "dev": "nodemon functions/api.js",
+    "build": "netlify deploy --prod"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "http-errors": "^2.0.0",
     "mongodb": "^6.5.0",
     "mongoose": "^8.2.4",
+    "netlify-lambda": "^2.0.16",
     "serverless-http": "^3.2.0",
     "validator": "^13.11.0"
   },
