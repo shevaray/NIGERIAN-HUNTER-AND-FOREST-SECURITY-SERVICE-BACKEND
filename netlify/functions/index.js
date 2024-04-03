@@ -1,14 +1,27 @@
-require('./core/db/mongoose');
+require('../../src/core/db/mongoose');
 const express = require('express');
 const serverless = require('serverless-http');
+const createError = require('http-errors');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-const usersRouter = require('./routes/users');
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+
+const usersRouter = require('../../src/routes/users');
 
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.use('/users', usersRouter)
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
 
 // error handler
 app.use(function(err, req, res, next) {
