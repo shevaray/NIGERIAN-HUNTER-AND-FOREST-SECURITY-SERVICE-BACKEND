@@ -21,6 +21,7 @@
   "homepage": "https://github.com/shevaray/NIGERIAN-HUNTER-AND-FOREST-SECURITY-SERVICE-BACKEND#readme",
   "dependencies": {
     "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
     "debug": "^4.3.4",
     "express": "^4.19.2",
     "http-errors": "^2.0.0",
