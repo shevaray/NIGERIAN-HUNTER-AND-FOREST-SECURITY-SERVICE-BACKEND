@@ -6,17 +6,19 @@ const router = express.Router();
 
 const app = express();
 const port = process.env.PORT || 3000;
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({limit: "50mb"}));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cors())
 
 
 
-const usersRouter = require('../src/routes/users');
 const indexRouter = require('../src/routes/index');
+const usersRouter = require('../src/routes/users');
+const recordsRouter = require('../src/routes/records');
 
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
+app.use('/records', recordsRouter)
 
 app.use('/.netilfy/functions/api', router)
 module.exports.handler = serverless(app);

@@ -1,15 +1,14 @@
 const express = require('express');
 const Router = express.Router();
-const User = require('../core/models/user-model');
+const Record = require('../core/models/record-model');
 const ResponseStatus = require('../core/enum/response-status.enum');
 
-
 Router.get('/', (req, res) => {
-    User.find().then((user) => { 
+    Record.find().then((records) => { 
         res.status(200).json({
             status: ResponseStatus.OK,
-            message: 'Users fetched successfully!',
-            data: user
+            message: 'Records fetched successfully!',
+            data: records
         })
     })
     .catch((error) => {
@@ -18,20 +17,20 @@ Router.get('/', (req, res) => {
 })
 
 Router.get('/:id', (req, res) => {
-    User.findById({ _id: req.params.id })
-        .then((user) => {
-            if (!user) {
+    Record.findById({ _id: req.params.id })
+        .then((record) => {
+            if (!record) {
                 return res.status(404).json({
                     status: ResponseStatus.FAILED,
-                    message: "User not found!",
+                    message: "Record not found!",
                     data: null
                 })
             }
 
             return res.status(200).json({
                 status: ResponseStatus.OK,
-                message: "User found succesfully!",
-                data: user
+                message: "Record found succesfully!",
+                data: record
             })
         })
         .catch((error) => {
@@ -42,14 +41,13 @@ Router.get('/:id', (req, res) => {
 })
 
 Router.post('/', (req, res) => {
-    const user = new User(req.body)
-
-    user.save()
-        .then((user) => { 
+    const record = new Record(req.body)
+    record.save()
+        .then((record) => { 
             res.status(200).json({
                 status: ResponseStatus.OK,
-                message: 'User created successfully!',
-                data: user
+                message: 'Record created successfully!',
+                data: record
             })
         })
         .catch((error) => {
@@ -59,13 +57,13 @@ Router.post('/', (req, res) => {
 
 Router.put('/:id', (req, res) => {
     const updatedData = req.body;
-    const userID = req.params.id;
+    const recordID = req.params.id;
 
-    User.findByIdAndUpdate({_id: userID}, updatedData)
-        .then((user) => { 
+    User.findByIdAndUpdate({_id: recordID}, updatedData)
+        .then(() => { 
             res.status(200).json({
                 status: ResponseStatus.OK,
-                message: 'User updated successfully!',
+                message: 'Record updated successfully!',
             })
         })
         .catch((error) => {
@@ -74,20 +72,20 @@ Router.put('/:id', (req, res) => {
 })
 
 Router.delete('/:id', (req, res) => {
-    User.findByIdAndDelete({ _id: req.params.id })
-        .then((user) => {
-            if (!user) {
+    Record.findByIdAndDelete({ _id: req.params.id })
+        .then((record) => {
+            if (!record) {
                 return res.status(404).json({
                     status: ResponseStatus.FAILED,
-                    message: "User not found!",
+                    message: "Record not found!",
                     data: null
                 })
             }
 
             return res.status(200).json({
                 status: ResponseStatus.OK,
-                message: "User deleted succesfully!",
-                data: user
+                message: "Record deleted succesfully!",
+                data: record
             })
         })
         .catch((error) => {
