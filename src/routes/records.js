@@ -59,7 +59,7 @@ Router.put('/:id', (req, res) => {
     const updatedData = req.body;
     const recordID = req.params.id;
 
-    User.findByIdAndUpdate({_id: recordID}, updatedData)
+    Record.findByIdAndUpdate({_id: recordID}, updatedData)
         .then(() => { 
             res.status(200).json({
                 status: ResponseStatus.OK,
