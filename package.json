@@ -1,20 +1,35 @@
 {
   "name": "nigerian-hunter-and-forest-security-service-backend",
-  "version": "0.0.0",
-  "private": true,
-  "main": "app.js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "node functions/api.js",
+    "dev": "nodemon functions/api.js",
     "build": "netlify deploy --prod"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shevaray/NIGERIAN-HUNTER-AND-FOREST-SECURITY-SERVICE-BACKEND.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shevaray/NIGERIAN-HUNTER-AND-FOREST-SECURITY-SERVICE-BACKEND/issues"
+  },
+  "homepage": "https://github.com/shevaray/NIGERIAN-HUNTER-AND-FOREST-SECURITY-SERVICE-BACKEND#readme",
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "^1.11.0",
-    "morgan": "~1.9.1",
-    "serverless-http": "^3.2.0"
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.4",
+    "express": "^4.19.2",
+    "http-errors": "^2.0.0",
+    "mongodb": "^6.5.0",
+    "mongoose": "^8.2.4",
+    "netlify-lambda": "^2.0.16",
+    "serverless-http": "^3.2.0",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
     "netlify-cli": "^17.21.1",
