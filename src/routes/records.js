@@ -6,21 +6,22 @@ const Record = require('../core/models/record-model');
 Router.get('/', async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const page_size = parseInt(req.query.page_size) || 10;
-    const from = ((page - 1) * page_size) + 1;
+    const from = (page - 1) * page_size;
     const to = page * page_size;
     const next_page = { page: page + 1, page_size: page_size };
     const previous_page = { page: page - 1, page_size: page_size };
     const results = {};
 
     try {
+        results.data = await Record.find({}).limit(page_size).skip(from).sort({updatedAt: 'asc'}).exec();
         results.total = await Record.countDocuments().exec();
-        results.data = await Record.find({}).limit(page_size).skip(from).sort({updatedAt: -1}).exec();
         if (to < results.total) next_page;
         if (from > 0) previous_page;
         results.current_page = page;
         results.page_size = page_size;
         results.from = from;
         results.to = to;
+        
         res.status(200).json({
             status: ResponseStatus.OK,
             message: 'Records fetched successfully!',
