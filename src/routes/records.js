@@ -13,14 +13,14 @@ Router.get('/', async (req, res) => {
     const results = {};
 
     try {
+        results.total = await Record.countDocuments().exec();
+        results.data = await Record.find({}).limit(page_size).skip(from).sort({createdAt: -1}).exec();
         if (to < results.total) next_page;
         if (from > 0) previous_page;
-        results.data = await Record.find({}).limit(page_size).skip(from).sort({createdAt: -1}).exec();
         results.current_page = page;
         results.page_size = page_size;
         results.from = from;
         results.to = to;
-        results.total = await Record.countDocuments().exec();
         res.status(200).json({
             status: ResponseStatus.OK,
             message: 'Records fetched successfully!',
