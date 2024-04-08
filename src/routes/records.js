@@ -1,98 +1,140 @@
 const express = require('express');
 const Router = express.Router();
-const Record = require('../core/models/record-model');
 const ResponseStatus = require('../core/enum/response-status.enum');
+const Record = require('../core/models/record-model');
 
-Router.get('/', (req, res) => {
-    Record.find().then((records) => { 
+Router.get('/', async (req, res) => {
+    const page = parseInt(req.query.page) || 1;
+    const page_size = parseInt(req.query.page_size) || 10;
+    const from = (page - 1) * page_size;
+    const to = page * page_size;
+    const next_page = { page: page + 1, page_size: page_size };
+    const previous_page = { page: page - 1, page_size: page_size };
+    const results = {};
+
+    try {
+        if (to < results.total) next_page;
+        if (from > 0) previous_page;
+        results.data = await Record.find({}).limit(page_size).skip(from).sort({createdAt: -1}).exec();
+        results.current_page = page;
+        results.page_size = page_size;
+        results.from = from;
+        results.to = to;
+        results.total = await Record.countDocuments().exec();
         res.status(200).json({
             status: ResponseStatus.OK,
             message: 'Records fetched successfully!',
-            data: records
+            data: results
         })
-    })
-    .catch((error) => {
-        res.status(400).send(error)
-    })
+        
+    } catch (error) {
+        res.status(500).send()
+    }
+
 })
 
-Router.get('/:id', (req, res) => {
-    Record.findById({ _id: req.params.id })
-        .then((record) => {
-            if (!record) {
-                return res.status(404).json({
-                    status: ResponseStatus.FAILED,
-                    message: "Record not found!",
-                    data: null
-                })
-            }
+Router.get('/:id', async (req, res) => {
+    const _id = req.params.id;
 
-            return res.status(200).json({
-                status: ResponseStatus.OK,
-                message: "Record found succesfully!",
-                data: record
-            })
+    try {
+        const record = await Record.findById(_id);
+        res.status(200).json({
+            status: ResponseStatus.OK,
+            message: "Record found succesfully!",
+            data: record
         })
-        .catch((error) => {
-            res.status(500).json({
-                message: "Internal server error",
+
+    } catch (error) {
+        if (error.kind === "ObjectId") {
+            return res.status(404).json({
+                status: ResponseStatus.FAILED,
+                message: "Record not found!",
+                data: null
             })
+        }
+
+        res.status(500).json({
+            message: "Service unavailable!, please try again",
         })
+    }
 })
 
-Router.post('/', (req, res) => {
-    const record = new Record(req.body)
-    record.save()
-        .then((record) => { 
-            res.status(200).json({
-                status: ResponseStatus.OK,
-                message: 'Record created successfully!',
-                data: record
-            })
+Router.post('/', async (req, res) => {
+    const record = new Record(req.body);
+
+    try {
+        await record.save()
+        res.status(201).json({
+            status: ResponseStatus.OK,
+            message: 'Record created successfully!',
+            data: record
         })
-        .catch((error) => {
-            res.status(400).send(error)
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Service unavailable!, please try again"
         })
+    }
 })
 
-Router.put('/:id', (req, res) => {
-    const updatedData = req.body;
-    const recordID = req.params.id;
+Router.put('/:id', async (req, res) => {
+    const _id = req.params.id;
 
-    Record.findByIdAndUpdate({_id: recordID}, updatedData)
-        .then(() => { 
-            res.status(200).json({
-                status: ResponseStatus.OK,
-                message: 'Record updated successfully!',
+    try {
+        const record = await Record.findByIdAndUpdate(_id, req.body, {new: true, runValidators: true});
+        if (!record) {
+            return res.status(404).json({
+                data: null,
+                status: ResponseStatus.FAILED,
+                message: "Record not found!"
             })
+        }
+
+        res.status(200).json({
+            status: ResponseStatus.OK,
+            message: 'Record updated successfully!',
+            data: record
         })
-        .catch((error) => {
-            res.status(400).send(error)
+
+    } catch (error) {
+        if (error.kind === "ObjectId") {
+            return res.status(404).json({
+                data: null,
+                status: ResponseStatus.FAILED,
+                message: "Record not found!"
+            })
+        }
+
+        res.status(500).json({
+            message: "Service unavailable!, please try again"
         })
+    }
 })
 
-Router.delete('/:id', (req, res) => {
-    Record.findByIdAndDelete({ _id: req.params.id })
-        .then((record) => {
-            if (!record) {
-                return res.status(404).json({
-                    status: ResponseStatus.FAILED,
-                    message: "Record not found!",
-                    data: null
-                })
-            }
+Router.delete('/:id', async (req, res) => {
+    const _id = req.params.id;
 
-            return res.status(200).json({
-                status: ResponseStatus.OK,
-                message: "Record deleted succesfully!",
-                data: record
-            })
+    try {
+        const record = await Record.findByIdAndDelete(_id);
+        res.status(200).json({
+            status: ResponseStatus.OK,
+            message: "Record deleted succesfully!",
+            data: record
         })
-        .catch((error) => {
-            res.status(500).json({
-                message: "Internal server error",
+
+    } catch (error) {
+        if (error.kind === "ObjectId") {
+            return res.status(404).json({
+                status: ResponseStatus.FAILED,
+                message: "Record not found!",
+                data: null
             })
+        }
+
+        res.status(500).json({
+            message: "Service unavailable!, please try again",
         })
+    }
 })
 
 module.exports = Router;

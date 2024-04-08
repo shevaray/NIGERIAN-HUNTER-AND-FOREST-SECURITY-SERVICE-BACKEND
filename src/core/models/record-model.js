@@ -16,7 +16,6 @@ const recordSchema = new mongoose.Schema(
         othername: {
             type: String,
             trim: true,
-            default: null
         },
         phone_number: {
             type: String,
