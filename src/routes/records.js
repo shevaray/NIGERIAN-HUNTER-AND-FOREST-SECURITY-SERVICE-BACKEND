@@ -13,7 +13,7 @@ Router.get('/', async (req, res) => {
     const results = {};
 
     try {
-        results.data = await Record.find({}).limit(page_size).skip(from).sort({updatedAt: 'asc'}).exec();
+        results.data = await Record.find({}).limit(page_size).skip(from).sort({updatedAt: 'desc'}).exec();
         results.total = await Record.countDocuments().exec();
         if (to < results.total) next_page;
         if (from > 0) previous_page;
