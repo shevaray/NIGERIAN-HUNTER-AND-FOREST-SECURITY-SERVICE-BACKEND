@@ -1,7 +1,7 @@
 const express = require('express');
 const Router = express.Router();
-const User = require('../core/models/user-model');
 const ResponseStatus = require('../core/enum/response-status.enum');
+const User = require('../core/models/user-model');
 
 
 Router.get('/', (req, res) => {
