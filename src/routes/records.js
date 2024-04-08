@@ -14,7 +14,7 @@ Router.get('/', async (req, res) => {
 
     try {
         results.total = await Record.countDocuments().exec();
-        results.data = await Record.find({}).limit(page_size).skip(from).sort({createdAt: -1}).exec();
+        results.data = await Record.find({}).limit(page_size).skip(from).sort({updatedAt: -1}).exec();
         if (to < results.total) next_page;
         if (from > 0) previous_page;
         results.current_page = page;
