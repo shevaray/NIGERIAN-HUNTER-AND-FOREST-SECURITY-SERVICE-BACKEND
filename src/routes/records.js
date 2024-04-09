@@ -72,6 +72,11 @@ Router.post('/', async (req, res) => {
         })
 
     } catch (error) {
+        if (error.errors.passport) return res.status(400).json({
+            status: ResponseStatus.FAILED,
+            message: error.errors.passport.message
+        })
+        
         res.status(500).json({
             message: "Service unavailable!, please try again"
         })
