@@ -110,7 +110,6 @@ const recordSchema = new mongoose.Schema(
         },
         passport: {
             type: String,
-            required: true,
             trim: true,
             maxlength: 2000000,
             validate(value) {
