@@ -113,7 +113,7 @@ const recordSchema = new mongoose.Schema(
             trim: true,
             maxlength: 2000000,
             validate(value) {
-                if (!validator.isBase64(value, { urlSafe: false })) {
+                if (value && !validator.isBase64(value)) {
                     throw new Error('Please upload a base64 image')
                 }
             }

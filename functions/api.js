@@ -9,14 +9,13 @@ const port = process.env.PORT || 3000;
 const indexRouter = require('../src/routes/index');
 const usersRouter = require('../src/routes/users');
 const recordsRouter = require('../src/routes/records');
+const jwt = require('jsonwebtoken')
+
 app.use(express.json({limit: "5mb"}));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 app.use(cors())
 
-
-
-
-
+// ROUTES
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
 app.use('/records', recordsRouter)
