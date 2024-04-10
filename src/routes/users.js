@@ -67,7 +67,11 @@ Router.post('/', async (req, res) => {
             data: user
         })
     } catch (error) {
-        res.status(400).send(error)
+        res.status(400).json({
+            status: ResponseStatus.FAILED,
+            message: "Please ensure that the required fields are filled appropriately!",
+            data: null
+        })
     }
 
 })
@@ -84,6 +88,7 @@ Router.post('/login', async (req, res) => {
         })
     } catch (error) {
         res.status(400).json({
+            status: ResponseStatus.FAILED,
             message: "Invalid Email or Password",
         })
     }
@@ -95,7 +100,11 @@ Router.post('/logout', Auth, async (req, res) => {
     try {
         req.user.tokens = req.user.tokens.filter((token) => token.token !== req.token);
         await req.user.save();
-        res.status(200).json({message: "Logged out successfully!"});
+
+        res.status(200).json({
+            status: ResponseStatus.OK,
+            message: "Logged out successfully!"
+        });
     } catch (error) {
         res.status(500).send();
     }
