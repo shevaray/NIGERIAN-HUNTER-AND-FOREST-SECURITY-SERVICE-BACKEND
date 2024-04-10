@@ -4,13 +4,17 @@ const ResponseStatus = require('../core/enum/response-status.enum');
 const User = require('../core/models/user-model');
 const Auth = require('../core/middleware/auth');
 
+// GET ROUTES
+
 Router.get('/', Auth, async (req, res) => {
+    if (!req.user) return;
+
     try {
-        const user = await User.find();
+        const users = await User.find();
         res.status(200).json({
             status: ResponseStatus.OK,
             message: 'User profile fetched successfully!',
-            data: user
+            data: users
         })
     } catch (error) {
         res.status(400).send(error)
@@ -18,6 +22,8 @@ Router.get('/', Auth, async (req, res) => {
 })
 
 Router.get('/profile', Auth, async (req, res) => {
+    if (!req.user) return;
+
     res.status(200).json({
         status: ResponseStatus.OK,
         message: 'Users fetched successfully!',
@@ -50,6 +56,8 @@ Router.get('/:id', async (req, res) => {
     }
 })
 
+//POST ROUTES
+
 Router.post('/', async (req, res) => {
     try {
         const user = await new User(req.body).save();
@@ -69,21 +77,43 @@ Router.post('/login', async (req, res) => {
         const user = await User.findByCredentials(req.body.email, req.body.password);
         const token = await user.generateAuthToken()
 
-        if (!user) return res.status(400).json({
-            status: ResponseStatus.FAILED,
-            message: "Invalid Email or Password",
-            data: user
-        })
-
         res.status(200).json({
             status: ResponseStatus.OK,
             message: "Login succesfully!",
             data: {user, token}
         })
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json({
+            message: "Invalid Email or Password",
+        })
     }
 }) 
+
+Router.post('/logout', Auth, async (req, res) => {
+    if (!req.user) return;
+
+    try {
+        req.user.tokens = req.user.tokens.filter((token) => token.token !== req.token);
+        await req.user.save();
+        res.status(200).json({message: "Logged out successfully!"});
+    } catch (error) {
+        res.status(500).send();
+    }
+})
+
+Router.post('/logout-all', Auth, async (req, res) => {
+    if (!req.user) return;
+
+    try {
+        req.user.tokens = [];
+        await req.user.save();
+        res.status(200).json({message: "All users logged out successfully!"});
+    } catch (error) {
+        res.status(500).send();
+    }
+})
+
+// PUT METHODS
 
 Router.put('/:id', async (req, res) => {
     const _id = req.params.id;
@@ -112,24 +142,20 @@ Router.put('/:id', async (req, res) => {
     }
 })
 
-Router.delete('/:id', async (req, res) => {
+//DELETE METHODS
+
+Router.delete('/delete', Auth, async (req, res) => {
+    if (!req.user) return;
+
     try {
-        const _id = req.params.id;
-        await User.findByIdAndDelete(_id);
+        await req.user.remove();
         res.status(200).json({
             status: ResponseStatus.OK,
-            message: "User deleted succesfully!",
+            message: "User deleted account succesfully!",
+            data: req.user
         })
 
     } catch (error) {
-        if (error.kind === "ObjectId") {
-            return res.status(404).json({
-                status: ResponseStatus.FAILED,
-                message: "User not found!",
-                data: null
-            })
-        }
-
         res.status(500).json({
             message: "Internal server error",
         })

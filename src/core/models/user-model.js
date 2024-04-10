@@ -43,6 +43,17 @@ const userSchema = new mongoose.Schema(
     { timestamps: true },
 )
 
+userSchema.methods.toJSON = function () {
+    const user = this;
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+    delete userObject.__v
+
+    return userObject
+}
+
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
     const token = jwt.sign({_id: user._id.toString()}, 'hunterandforestsecurityservice');
@@ -56,7 +67,7 @@ userSchema.statics.findByCredentials = async (email, password) => {
     if (!user) return null;
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return null
+    if (!isMatch) return null;
 
     return user
 }

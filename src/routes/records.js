@@ -2,8 +2,11 @@ const express = require('express');
 const Router = express.Router();
 const ResponseStatus = require('../core/enum/response-status.enum');
 const Record = require('../core/models/record-model');
+const Auth = require('../core/middleware/auth');
 
-Router.get('/', async (req, res) => {
+Router.get('/', Auth, async (req, res) => {
+    if (!req.user) false;
+
     const page = parseInt(req.query.page) || 1;
     const page_size = parseInt(req.query.page_size) || 10;
     const from = (page - 1) * page_size;
@@ -34,11 +37,20 @@ Router.get('/', async (req, res) => {
 
 })
 
-Router.get('/:id', async (req, res) => {
-    const _id = req.params.id;
+Router.get('/:id', Auth, async (req, res) => {
+    if (!req.user) return;
 
     try {
-        const record = await Record.findById(_id);
+        const record = await Record.findOne({ _id: req.params.id });
+        
+        if (!record) {
+            return res.status(404).json({
+                status: ResponseStatus.FAILED,
+                message: "Record not found!",
+                data: null
+            })
+        }
+
         res.status(200).json({
             status: ResponseStatus.OK,
             message: "Record found succesfully!",
@@ -60,10 +72,11 @@ Router.get('/:id', async (req, res) => {
     }
 })
 
-Router.post('/', async (req, res) => {
-    const record = new Record(req.body);
+Router.post('/', Auth, async (req, res) => {
+    if (!req.user) return;
 
     try {
+        const record = new Record(req.body);
         await record.save()
         res.status(201).json({
             status: ResponseStatus.OK,
@@ -83,11 +96,11 @@ Router.post('/', async (req, res) => {
     }
 })
 
-Router.put('/:id', async (req, res) => {
-    const _id = req.params.id;
+Router.put('/:id', Auth, async (req, res) => {
+    if (!req.user) return;
 
     try {
-        const record = await Record.findByIdAndUpdate(_id, req.body, {new: true, runValidators: true});
+        const record = await Record.findByIdAndUpdate({_id: req.params.id}, req.body, {new: true, runValidators: true});
         if (!record) {
             return res.status(404).json({
                 data: null,
@@ -117,11 +130,20 @@ Router.put('/:id', async (req, res) => {
     }
 })
 
-Router.delete('/:id', async (req, res) => {
-    const _id = req.params.id;
+Router.delete('/:id', Auth, async (req, res) => {
+    if (!req.user) return;
 
     try {
-        const record = await Record.findByIdAndDelete(_id);
+        const record = await Record.findByIdAndDelete({ _id: req.params.id });
+        
+        if (!record) {
+            return res.status(404).json({
+                status: ResponseStatus.FAILED,
+                message: "Record not found!",
+                data: null
+            })
+        }
+        
         res.status(200).json({
             status: ResponseStatus.OK,
             message: "Record deleted succesfully!",
